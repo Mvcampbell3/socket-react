@@ -4,8 +4,18 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const server = http.Server(app);
 const io = require('socket.io')(server);
+const routes = require('./routes');
 
 const mongoose = require('mongoose');
+
+app.use(express.urlencoded({extended: true}))
+app.use(express.json())
+
+app.use(routes);
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static("client/build"));
+}
 
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/socketreact', { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
