@@ -16,5 +16,18 @@
   "bugs": {
     "url": "https://github.com/Mvcampbell3/socket-react/issues"
   },
-  "homepage": "https://github.com/Mvcampbell3/socket-react#readme"
+  "homepage": "https://github.com/Mvcampbell3/socket-react#readme",
+  "dependencies": {
+    "bcrypt": "^3.0.7",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "if-env": "^1.0.4",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.8.3",
+    "socket.io": "^2.3.0"
+  },
+  "devDependencies": {
+    "concurrently": "^5.0.2",
+    "nodemon": "^2.0.2"
+  }
 }
