@@ -1,9 +1,13 @@
+const db = require('../models');
+
 module.exports = function(io) {
+
+
 
   io.on('connection', (socket) => {
     console.log('new connection')
 
-    console.log(io.sockets.adapter.rooms)
+    // console.log(io.sockets.adapter.rooms)
 
     socket.on('join room', (room) => {
       socket.join(room);
@@ -13,17 +17,39 @@ module.exports = function(io) {
       socket.emit('useable data', socket.adapter.rooms)
     })
 
+    socket.on('message', ({ message, room, username }) => {
+      console.log(message, room, username);
+
+      // Need to set up ORM for db-socket interface ? callbacks ?
+
+      if (message && room && username) {
+        const newMessage = new db.Message({
+          content: message, username, room
+        })
+
+        newMessage.save()
+          .then(result => {
+            console.log(result);
+            io.in(room).emit('message back', message)
+          })
+          .catch(err => console.log(err))
+      }
+
+    })
+
+    // disconnect features
+
     socket.on('leaving room', (room) => {
       // try and run a check to see if there are still users in the room, if not close the room
       console.log(room)
       // console.log(socket.adapter.rooms[room])
-      const left = socket.adapter.rooms[room].length;
-      console.log(left);
-      if (left > 1) {
-        console.log('someone is still in there')
-      } else {
-        console.log('there is not anyone left')
-      }
+      // const left = socket.adapter.rooms[room].length;
+      // console.log(left);
+      // if (left > 1) {
+      //   console.log('someone is still in there')
+      // } else {
+      //   console.log('there is not anyone left')
+      // }
     })
 
     socket.on('disconnect', () => {

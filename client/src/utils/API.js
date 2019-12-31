@@ -7,5 +7,9 @@ export default {
 
   getRooms() {
     return axios.get('/api/room/all')
+  },
+
+  getMessagesForRoom(room) {
+    return axios.get(`/api/message/all/${room}`)
   }
 }

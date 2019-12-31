@@ -14,7 +14,7 @@ function App() {
       <Router>
         <Switch>
           <Route path='/' exact render={props => <Home {...props} setRoom={setRoom} />}></Route>
-          <Route path='/chat' render={props => <Chat {...props} room={room} />}></Route>
+          <Route path='/chat' exact render={props => <Chat {...props} room={room} />}></Route>
         </Switch>
       </Router>
     </div>
