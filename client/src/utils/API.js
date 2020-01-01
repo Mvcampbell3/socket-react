@@ -11,5 +11,11 @@ export default {
 
   getMessagesForRoom(room) {
     return axios.get(`/api/message/all/${room}`)
+  },
+
+  deleteRooms() {
+    return axios.delete('/api/room/delete/all')
   }
+
+
 }

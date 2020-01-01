@@ -68,33 +68,32 @@ module.exports = function(io) {
 
     // disconnect features
 
-    socket.on('leaving room', (room) => {
-      // try and run a check to see if there are still users in the room, if not close the room
-      console.log(room)
-      console.log(socket.id)
-      db.Room.findOne({ name: room })
-        .then(dbRoom => {
-          console.log(dbRoom)
-          if (dbRoom.users.length > 1) {
-            // run pull on user array
-            dbRoom.update({ $pull: { users: socket.id } })
-              .then(result => {
-                console.log(result)
-              })
-              .catch(err => console.log(err))
-          } else {
-            // delete room
-            dbRoom.remove()
-              .then(result => {
-                console.log(result)
-              })
-              .catch(err => console.log(err))
-          }
-        })
-    })
-
     socket.on('disconnect', () => {
       console.log('user left connection')
+      db.Room.find({ users: socket.id })
+        .then(dbRooms => {
+          console.log(dbRooms)
+          dbRooms.forEach(room => {
+            if (room.users.length > 1) {
+              // run pull on user array
+              room.update({ $pull: { users: socket.id } })
+                .then(result => {
+                  console.log(result)
+                  // send emit to update room list
+                })
+                .catch(err => console.log(err))
+            } else {
+              // delete room
+              room.remove()
+                .then(result => {
+                  console.log(result)
+                  // send emit to update room list
+                })
+                .catch(err => console.log(err))
+            }
+          })
+
+        })
     })
   })
 
