@@ -22,6 +22,7 @@ const Home = (props) => {
       {rooms.map((room, i) => (
         <button onClick={() => { props.setRoom(room.name) }} key={i}>name: {room.name}</button>
       ))}
+      <button onClick={() => { props.setRoom('testing') }}>test room</button>
       <Link to='/chat'>Chat</Link>
     </div>
   );

@@ -10,11 +10,40 @@ module.exports = function(io) {
     // console.log(io.sockets.adapter.rooms)
 
     socket.on('join room', (room) => {
-      socket.join(room);
 
-      console.log(socket.adapter.rooms)
+      db.Room.findOne({ name: room })
+        .then(dbRoom => {
+          console.log(dbRoom);
 
-      socket.emit('useable data', socket.adapter.rooms)
+          if (dbRoom) { // if the room exists already
+
+            dbRoom.update({ $push: { users: socket.id } })
+              .then(result => {
+                console.log(result);
+                socket.join(room);
+                socket.emit('room entered', { user: socket.id, room })
+              })
+              .catch(err => console.log(err));
+
+          } else {  // there is no room
+
+            const newRoom = new db.Room({
+              name: room,
+              users: [socket.id]
+            })
+
+            newRoom.save()
+              .then(result => {
+                console.log(result);
+                socket.emit('room entered', { user: socket.id, room })
+                socket.join(room);
+              })
+              .catch(err => {
+                console.log(err);
+              })
+          }
+        })
+        .catch(err => { console.log(err) })
     })
 
     socket.on('message', ({ message, room, username }) => {
@@ -42,14 +71,26 @@ module.exports = function(io) {
     socket.on('leaving room', (room) => {
       // try and run a check to see if there are still users in the room, if not close the room
       console.log(room)
-      // console.log(socket.adapter.rooms[room])
-      // const left = socket.adapter.rooms[room].length;
-      // console.log(left);
-      // if (left > 1) {
-      //   console.log('someone is still in there')
-      // } else {
-      //   console.log('there is not anyone left')
-      // }
+      console.log(socket.id)
+      db.Room.findOne({ name: room })
+        .then(dbRoom => {
+          console.log(dbRoom)
+          if (dbRoom.users.length > 1) {
+            // run pull on user array
+            dbRoom.update({ $pull: { users: socket.id } })
+              .then(result => {
+                console.log(result)
+              })
+              .catch(err => console.log(err))
+          } else {
+            // delete room
+            dbRoom.remove()
+              .then(result => {
+                console.log(result)
+              })
+              .catch(err => console.log(err))
+          }
+        })
     })
 
     socket.on('disconnect', () => {

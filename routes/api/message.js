@@ -6,7 +6,7 @@ router.get('/all/:room', (req, res) => {
   console.log('//////////////')
   db.Message.find({ room: req.params.room })
     .then(messages => {
-      console.log(messages);
+      // console.log(messages);
       res.status(200).json(messages)
     })
     .catch(err => res.status(500).json(err))

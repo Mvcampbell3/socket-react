@@ -19,6 +19,7 @@ router.post('/new', (req, res) => {
 
   db.Room.findOne({ name })
     .then(dbRoom => {
+      
       if (!dbRoom) {
 
         const newRoom = new db.Room({
@@ -36,6 +37,17 @@ router.post('/new', (req, res) => {
       } else {
         res.status(422).json({ msg: 'Room already exists' })
       }
+    })
+})
+
+router.delete('/delete/all', (req, res) => {
+  db.Room.deleteMany()
+    .then(result => {
+      console.log(result);
+      res.status(200).json(result)
+    })
+    .catch(err => {
+      res.status(500).json(err)
     })
 })
 

@@ -23,6 +23,10 @@ const Chat = (props) => {
       console.log(message)
     })
 
+    socket.current.on('room entered', (data) => {
+      console.log(data)
+    })
+
     return function() {
       socket.current.emit('leaving room', props.room)
       socket.current.disconnect(props.room);

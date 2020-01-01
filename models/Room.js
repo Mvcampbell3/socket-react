@@ -7,9 +7,14 @@ const RoomSchema = new Schema({
     required: true
   },
 
-  password: {
-    type: String,
-    required: true
+  users: {
+    type: Array,
+    default: []
+  },
+
+  created: {
+    type: Date,
+    default: Date.now()
   }
 })
 
