@@ -7,14 +7,14 @@ module.exports = function(io) {
 
     socket.on('join room', (room) => {
 
-      db_interface.joinRoomOrCreateRoom(socket, room, function({ err, result }) {
+      db_interface.joinRoomOrCreateRoom(socket, room, function({ err, dbRoom }) {
         if (err) {
           throw err;
         }
 
         console.log('this is the result')
-        console.log(result);
-        socket.emit('room entered', { user: socket.id, room })
+        console.log(dbRoom);
+        socket.emit('room entered', { user: socket.id, room, dbRoom })
         socket.join(room);
       })
     })
@@ -34,13 +34,13 @@ module.exports = function(io) {
 
     socket.on('disconnect', () => {
 
-      db_interface.disconnectCheck(socket, function({ err, result } ) {
+      db_interface.disconnectCheck(socket, function({ err, result }) {
         if (err) throw err;
         console.log(result);
         // send emit for room list update
       })
 
-      
+
     })
   })
 

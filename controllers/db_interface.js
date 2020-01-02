@@ -3,38 +3,13 @@ const db = require('../models');
 
 // This Method joins an existing socket room or creates a new room
 const joinRoomOrCreateRoom = (socket, room, cb) => {
-  db.Room.findOne({ name: room })
+  db.Room.findOneAndUpdate({ name: room }, { $push: { users: socket.id } }, { new: true, upsert: true })
     .then(dbRoom => {
-      console.log(dbRoom, 'this is dbRoom from join or create');
-
-      if (dbRoom) { // if the room exists already
-
-        dbRoom.update({ $push: { users: socket.id } })
-          .then(result => {
-            cb({ result });
-          })
-          .catch(err => {
-            cb({ err })
-          });
-
-      } else {  // there is no room
-
-        const newRoom = new db.Room({
-          name: room,
-          users: [socket.id]
-        })
-
-        newRoom.save()
-          .then(result => {
-            cb({ result })
-          })
-          .catch(err => {
-            cb({ err })
-          })
-      }
+      console.log(dbRoom)
+      cb({ dbRoom })
     })
     .catch(err => {
-      cb({ err })
+      console.log(err)
     })
 }
 

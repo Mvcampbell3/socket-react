@@ -24,7 +24,10 @@ const Chat = (props) => {
   const [username, setUsername] = useState('');
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
-  const [squares, setSquares] = useState(startSquares)
+  const [squares, setSquares] = useState(startSquares);
+
+  const [turn, setTurn] = useState(false);
+  const [start, setStart] = useState(false);
 
   useEffect(() => {
     console.log('chat loaded')

@@ -1,0 +1,34 @@
+Player 1 creates room and loads in
+
+assign p1 with side, which also determines who goes first
+
+Player 2 joins in room
+
+assign p2 other side
+
+display to player 1 that player 2 has entered the game
+
+Game Starts
+
+Player assigned X goes first, Display that it is their turn
+
+click of the boxes gated by turn variable
+
+
+socket will send entire game array back and forth on each turn
+
+update display with array of squares
+
+clicking on squares
+
+  check if players turn
+  check if open
+
+  filter squares, grab place from attribute on squares
+  update object in array : open: false, value: 'X' or 'O';
+
+  update useState, send socket with game array
+  check if there is a winning condition
+  
+
+
