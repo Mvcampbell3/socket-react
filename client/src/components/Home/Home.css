@@ -1,12 +1,20 @@
 .test-btn-area{
-  width: 100vw;
   height: 40px;
   display: flex;
   justify-content: space-around;
+  align-items: center;
+  background-color: yellow;
+  margin: 5em 0 0 0;
 }
 
 .rooms-container{
   display: grid;
   grid-template-columns: 1fr 1fr;
+  background-color: whitesmoke;
+  min-height: calc(100vh - 56.4px);
 }
 
+.left-side{
+  padding: 30px;
+  border-right: 3px black solid;
+}

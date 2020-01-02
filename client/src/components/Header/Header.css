@@ -1,0 +1,11 @@
+header{
+  background-color: seagreen;
+  text-align: center;
+  padding: 10px 0;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  color: white;
+}
+
+header h1{
+  letter-spacing: 1.5px;
+}
