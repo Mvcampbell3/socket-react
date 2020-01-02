@@ -7,7 +7,9 @@ import API from '../../utils/API';
 const Chat = (props) => {
 
   let socket = useRef(null);
-  let ENDPOINT = 'localhost:3001';
+  let ENDPOINT = '/localhost:3001'
+
+  
 
   const startSquares = [
     { place: 1, open: true, value: '' },

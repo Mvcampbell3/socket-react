@@ -7,9 +7,21 @@ module.exports = function(io) {
 
     socket.on('join room', (room) => {
 
-      db_interface.joinRoomOrCreateRoom(socket, room, function({ err, dbRoom }) {
+      // db_interface.joinRoomOrCreateRoom(socket, room, function({ err, dbRoom }) {
+      //   if (err) {
+      //     throw err;
+      //   }
+
+      //   console.log('this is the result')
+      //   console.log(dbRoom);
+      //   socket.emit('room entered', { user: socket.id, room, dbRoom })
+      //   socket.join(room);
+      // })
+
+      db_interface.checkRoomUsersLength(socket, room, function({ err, dbRoom }) {
         if (err) {
-          throw err;
+          // Throwing err not what we want to do apparently
+          return console.log(err);
         }
 
         console.log('this is the result')

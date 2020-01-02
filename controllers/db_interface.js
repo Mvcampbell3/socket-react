@@ -13,6 +13,17 @@ const joinRoomOrCreateRoom = (socket, room, cb) => {
     })
 }
 
+const checkRoomUsersLength = (socket, room, cb) => {
+  db.Room.findOne({ name: room })
+    .then(dbRoom => {
+      if (!dbRoom || dbRoom.users.length < 2) {
+        joinRoomOrCreateRoom(socket, room, cb)
+      } else {
+        cb({ err: { msg: 'There are enough fuckers here already' } })
+      }
+    })
+}
+
 const addMessage = (message, room, username, cb) => {
 
   if (message && room && username) {
@@ -58,4 +69,4 @@ const disconnectCheck = (socket, cb) => {
     })
 }
 
-module.exports = { joinRoomOrCreateRoom, addMessage, disconnectCheck }
+module.exports = { joinRoomOrCreateRoom, addMessage, disconnectCheck, checkRoomUsersLength }
