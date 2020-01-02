@@ -15,3 +15,9 @@ button{
   color: white;
   font-size: 16px;
 }
+
+.test-area{
+  margin: 2em 0;
+  background-color: lightyellow;
+  padding: 20px;
+}

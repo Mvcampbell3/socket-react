@@ -1,0 +1,14 @@
+.landing-container{
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+}
+
+.left-side{
+  border-right: 3px black solid;
+}
+
+.form-container{
+  width: fit-content;
+  margin: 0 auto;
+  padding: 20px;
+}
