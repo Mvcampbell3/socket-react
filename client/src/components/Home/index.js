@@ -43,6 +43,24 @@ const Home = (props) => {
     setGoChat(true)
   }
 
+  const createRoom = () => {
+    API.checkRoom(newRoom)
+      .then(result => {
+        console.log(result)
+        if (result.data.ok) {
+          console.log('would make and send to room');
+          props.setRoom(newRoom);
+          setGoChat(true)
+        } else {
+          console.log('room already exists')
+          alert(`${newRoom} already exists, pick another room name!`)
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      })
+  }
+
   return (
     <div className='home'>
       <Header />
@@ -71,7 +89,7 @@ const Home = (props) => {
               <input type="text" name="name" id="name" value={newRoom} onChange={(e) => { handleInputNewRoom(e) }} />
             </div>
             <div className="input-group">
-              <button className="createBtn" data-room={newRoom} onClick={(e) => { handleRoomBtn(e) }}>Create Room</button>
+              <button className="createBtn" data-room={newRoom} onClick={(e) => { createRoom(e) }}>Create Room</button>
             </div>
           </div>
         </div>

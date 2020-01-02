@@ -18,3 +18,14 @@
   padding: 30px;
   border-right: 3px black solid;
 }
+
+.create-room-form{
+  width: fit-content;
+  margin: 1em auto;
+  padding: 30px;
+}
+
+.create-room-form button{
+  display: block;
+  margin: .5em auto;
+}

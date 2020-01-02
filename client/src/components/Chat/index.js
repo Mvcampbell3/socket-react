@@ -74,10 +74,6 @@ const Chat = (props) => {
     <div className="chat">
       <h1>This is the chat page</h1>
 
-      <div className="test-btn-area">
-
-      </div>
-
       <div className="form-container">
         <div className="input-group">
           <label htmlFor="username">Username</label>

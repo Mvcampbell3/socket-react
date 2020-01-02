@@ -6,16 +6,18 @@ export default {
   },
 
   getRooms() {
-    return axios.get('/api/room/all')
+    return axios.get('/api/room/all');
   },
 
   getMessagesForRoom(room) {
-    return axios.get(`/api/message/all/${room}`)
+    return axios.get(`/api/message/all/${room}`);
   },
 
   deleteRooms() {
-    return axios.delete('/api/room/delete/all')
+    return axios.delete('/api/room/delete/all');
+  },
+
+  checkRoom(name) {
+    return axios.get(`/api/room/check/${name}`);
   }
-
-
 }

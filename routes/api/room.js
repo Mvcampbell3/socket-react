@@ -19,7 +19,7 @@ router.post('/new', (req, res) => {
 
   db.Room.findOne({ name })
     .then(dbRoom => {
-      
+
       if (!dbRoom) {
 
         const newRoom = new db.Room({
@@ -45,6 +45,20 @@ router.delete('/delete/all', (req, res) => {
     .then(result => {
       console.log(result);
       res.status(200).json(result)
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+})
+
+router.get('/check/:name', (req, res) => {
+  db.Room.findOne({ name: req.params.name })
+    .then(dbRoom => {
+      if (!dbRoom) {
+        res.status(200).json({ ok: true })
+      } else {
+        res.status(200).json({ ok: false })
+      }
     })
     .catch(err => {
       res.status(500).json(err)
