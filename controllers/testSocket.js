@@ -53,5 +53,9 @@ module.exports = function(io) {
         socket.broadcast.emit('update room');
       })
     })
+
+    socket.on('testing', () => {
+      socket.emit('test back', 'This is the test back message')
+    })
   })
 }

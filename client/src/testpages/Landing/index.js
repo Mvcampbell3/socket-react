@@ -1,12 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './Landing.css'
 
 const Landing = (props) => {
 
   const [newRoom, setNewRoom] = useState('');
-  const [goChat, setGoChat] = useState(false);
 
   const testing = true;
+  let socket = useRef(null);
+
+  let { selectedRoom, joinRoom, appSocket } = props
+
+  useEffect(() => {
+    if (selectedRoom) {
+      console.log('room has been changed', selectedRoom);
+      joinRoom()
+    }
+  }, [selectedRoom, joinRoom])
+
+  useEffect(() => {
+    if (appSocket) {
+      socket.current = appSocket
+
+      socket.current.emit('testing')
+
+      socket.current.on('test back', (message) => {
+        console.log(message)
+      })
+    }
+  }, [appSocket])
 
   const handleNewRoomInput = (e) => {
     setNewRoom(e.target.value)
@@ -21,12 +42,9 @@ const Landing = (props) => {
     props.setSelectedRoom('testing');
   }
 
-  useEffect(() => {
-    console.log('room has been changed', props.selectedRoom);
-    if (props.selectedRoom) {
-      props.joinRoom()
-    }
-  }, [props.selectedRoom])
+  const landingGameSet = () => {
+    props.setLanding(!props.landing)
+  }
 
   return (
     <div className="wrapper">
@@ -39,6 +57,7 @@ const Landing = (props) => {
             <button onClick={() => { props.getRooms() }}>Get Rooms</button>
             <button onClick={testRoom}>Test Room</button>
             <button onClick={props.deleteRooms}>Delete Rooms</button>
+            <button onClick={landingGameSet}>Game Page</button>
           </div>
         </div>
         : null
