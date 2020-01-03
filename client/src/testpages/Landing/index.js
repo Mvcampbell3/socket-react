@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Landing.css'
 
 const Landing = (props) => {
@@ -14,7 +14,19 @@ const Landing = (props) => {
 
   const createRoom = () => {
     console.log(newRoom);
+    props.setSelectedRoom(newRoom);
   }
+
+  const testRoom = () => {
+    props.setSelectedRoom('testing');
+  }
+
+  useEffect(() => {
+    console.log('room has been changed', props.selectedRoom);
+    if (props.selectedRoom) {
+      props.joinRoom()
+    }
+  }, [props.selectedRoom])
 
   return (
     <div className="wrapper">
@@ -25,6 +37,8 @@ const Landing = (props) => {
           <h4 className='text-center'>Testing Area</h4>
           <div className="testing-box">
             <button onClick={() => { props.getRooms() }}>Get Rooms</button>
+            <button onClick={testRoom}>Test Room</button>
+            <button onClick={props.deleteRooms}>Delete Rooms</button>
           </div>
         </div>
         : null
@@ -44,8 +58,8 @@ const Landing = (props) => {
         <div className="right-side">
           {props.rooms.length > 0 ?
             <>
-              {props.rooms.map(room => (
-                <div className="room">{room.name}</div>
+              {props.rooms.map((room, i) => (
+                <div className="room" key={i}>{room.name}</div>
               ))}
             </>
             : <h4 className='text-center'>There are no rooms yet</h4>

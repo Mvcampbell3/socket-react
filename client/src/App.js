@@ -9,6 +9,7 @@ import Game from './testpages/Game';
 function App() {
 
   const [rooms, setRooms] = useState([]);
+  const [selectedRoom, setSelectedRoom] = useState('');
 
   let socket = useRef(null);
   let ENDPOINT = 'localhost:3001';
@@ -24,10 +25,34 @@ function App() {
       console.log({rooms})
       setRooms(rooms)
     })
+
+    socket.current.on('join room', (data) => {
+      console.log(data);
+    })
+
+    socket.current.on('admin message', (message) => {
+      console.log(message)
+    })
+
+    socket.current.on('update room', () => {
+      socket.current.emit('get rooms')
+    })
+
+    return function() {
+      socket.current.disconnect();
+    }
   }, [ENDPOINT, socket])
 
   const getRooms = () => {
     socket.current.emit('get rooms')
+  }
+
+  const joinRoom = () => {
+    socket.current.emit('join room', selectedRoom);
+  }
+
+  const deleteRooms = () => {
+    socket.current.emit('delete rooms')
   }
 
   return (
@@ -41,9 +66,13 @@ function App() {
           <Route path='/' exact render={props =>
             <Landing
               {...props}
-              socket={socket}
-              getRooms={getRooms}
               rooms={rooms}
+              getRooms={getRooms}
+              joinRoom={joinRoom}
+              selectedRoom={selectedRoom}
+              setSelectedRoom={setSelectedRoom}
+              deleteRooms={deleteRooms}
+
             />
           } />
           <Route path='/game' exact render={props => <Game {...props} />} />
