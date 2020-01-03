@@ -4,7 +4,7 @@ import './Game.css'
 const Game = (props) => {
 
   const testing = false;
-  let socket = useRef(null);
+  // let socket = useRef(null);
 
   const startingSquares = [
     { place: 1, open: true, value: '' },
@@ -20,18 +20,18 @@ const Game = (props) => {
 
   const [squares, setSquares] = useState(startingSquares);
 
-  useEffect(() => {
-    if (props.appSocket) {
-      socket.current = props.appSocket
-    }
+  // useEffect(() => {
+  //   if (props.appSocket) {
+  //     socket.current = props.appSocket
+  //   }
 
-    socket.current.emit('testing');
+  //   socket.current.emit('testing');
 
-    socket.current.on('test back', message => {
-      console.log(message)
-    })
+  //   socket.current.on('test back', message => {
+  //     console.log(message)
+  //   })
 
-  }, [props.appSocket])
+  // }, [props.appSocket])
 
   return (
     <div className="wrapper">

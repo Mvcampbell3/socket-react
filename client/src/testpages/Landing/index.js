@@ -7,15 +7,6 @@ const Landing = (props) => {
 
   const testing = true;
 
-  let { selectedRoom, joinRoom } = props
-
-  useEffect(() => {
-    if (selectedRoom) {
-      console.log('room has been changed', selectedRoom);
-      joinRoom()
-    }
-  }, [selectedRoom, joinRoom])
-
   const handleNewRoomInput = (e) => {
     setNewRoom(e.target.value)
   }

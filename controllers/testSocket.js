@@ -24,12 +24,24 @@ module.exports = function(io) {
       db_interface.checkRoom(socket, room, ({ err, dbRoom }) => {
         if (err) {
           console.log('had error')
+          errSend({ err })
           return console.log(err);
         }
 
-        socket.join(room);
-        socket.broadcast.emit('update room');
-        return socket.emit('join room', { dbRoom })
+        db_interface.grabMessage(room, ({ err, messages }) => {
+          if (err) {
+            errSend({ err })
+            return console.log(err)
+
+          }
+
+          socket.join(room);
+          socket.broadcast.emit('update room');
+          return socket.emit('join room', { dbRoom, messages })
+
+        })
+
+
 
       })
     })
@@ -80,5 +92,9 @@ module.exports = function(io) {
     socket.on('testing', () => {
       socket.emit('test back', 'This is the test back message')
     })
+
+    function errSend({ err }) {
+      socket.emit('err send', { err })
+    }
   })
 }

@@ -5,10 +5,6 @@ import io from 'socket.io-client';
 import Landing from './testpages/Landing';
 import Game from './testpages/Game';
 
-// Cannot use router to go to different page
-// It will reset the connection
-// You can render conditionally on page with redirect
-
 function App() {
 
   const [rooms, setRooms] = useState([]);
@@ -40,9 +36,7 @@ function App() {
 
     socket.current.on('join room', (data) => {
       console.log(data);
-      // this is where we might want to have goChat be changed
-      // have it set here and then run another useEffect inside of landing
-      // return a redirect to /game
+      setMessages(data.messages);
       setLanding(false);
     })
 
@@ -57,6 +51,11 @@ function App() {
     socket.current.on('message back', ({ result, messages }) => {
       console.log(result);
       console.log(messages)
+      setMessages(messages)
+    })
+
+    socket.current.on('err send', ({ err }) => {
+      console.log(err)
     })
 
     return function() {
@@ -64,12 +63,15 @@ function App() {
     }
   }, [ENDPOINT, socket])
 
+  useEffect(() => {
+    if (selectedRoom) {
+      console.log('room has been changed', selectedRoom);
+      socket.current.emit('join room', selectedRoom)
+    }
+  }, [selectedRoom])
+
   const getRooms = () => {
     socket.current.emit('get rooms')
-  }
-
-  const joinRoom = () => {
-    socket.current.emit('join room', selectedRoom);
   }
 
   const deleteRooms = () => {
@@ -89,7 +91,6 @@ function App() {
         <Landing
           rooms={rooms}
           getRooms={getRooms}
-          joinRoom={joinRoom}
           selectedRoom={selectedRoom}
           setSelectedRoom={setSelectedRoom}
           deleteRooms={deleteRooms}
