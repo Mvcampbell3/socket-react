@@ -27,9 +27,30 @@ module.exports = function(io) {
           return console.log(err);
         }
 
+        socket.join(room);
         socket.broadcast.emit('update room');
         return socket.emit('join room', { dbRoom })
 
+      })
+    })
+
+    socket.on('send message', (data) => {
+      const room = data.selectedRoom;
+      console.log(data);
+      db_interface.saveMessage(socket, data, ({ err, result }) => {
+        if (err) {
+          return console.log(err);
+
+
+        }
+
+        db_interface.grabMessage(room, ({ err, messages }) => {
+          if (err) {
+            return console.log(err)
+          }
+
+          io.in(room).emit('message back', { result, messages })
+        })
       })
     })
 
@@ -42,6 +63,8 @@ module.exports = function(io) {
         return socket.emit('admin message', result)
       })
     })
+
+
 
     socket.on('disconnect', () => {
       db_interface.disconnectCheck(socket, function({ err, result }) {

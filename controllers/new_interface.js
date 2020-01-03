@@ -34,10 +34,40 @@ const joinUpsertRoom = (socket, room, cb) => {
     })
 }
 
+const saveMessage = (socket, data, cb) => {
+  console.log(data);
+  const { username, message, selectedRoom } = data;
+  console.log(username, message, selectedRoom);
+
+  const newMessage = new db.Message({
+    username, 
+    content: message,
+    room: selectedRoom
+  });
+
+  newMessage.save()
+    .then(result => {
+      cb({ result })
+    })
+    .catch(err => {
+      cb({ err })
+    })
+}
+
 const deleteRooms = (cb) => {
   db.Room.deleteMany()
     .then(result => {
       cb({ result })
+    })
+    .catch(err => {
+      cb({ err })
+    })
+}
+
+const grabMessage = (room, cb) => {
+  db.Message.find({ room })
+    .then(messages => {
+      cb({ messages })
     })
     .catch(err => {
       cb({ err })
@@ -71,4 +101,4 @@ const disconnectCheck = (socket, cb) => {
     })
 }
 
-module.exports = { getRooms, checkRoom, deleteRooms, disconnectCheck }
+module.exports = { getRooms, checkRoom, deleteRooms, disconnectCheck, saveMessage, grabMessage }

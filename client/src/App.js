@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
-// import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import io from 'socket.io-client';
 
 import Landing from './testpages/Landing';
@@ -14,7 +13,10 @@ function App() {
 
   const [rooms, setRooms] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState('');
-  let [landing, setLanding] = useState(true)
+  let [landing, setLanding] = useState(true);
+  const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState([]);
+  const [username, setUsername] = useState('');
 
   let socket = useRef(null);
   let ENDPOINT = 'localhost:3001';
@@ -38,9 +40,10 @@ function App() {
 
     socket.current.on('join room', (data) => {
       console.log(data);
-      // this is where we migth want to have goChat be changed
+      // this is where we might want to have goChat be changed
       // have it set here and then run another useEffect inside of landing
       // return a redirect to /game
+      setLanding(false);
     })
 
     socket.current.on('admin message', (message) => {
@@ -49,6 +52,11 @@ function App() {
 
     socket.current.on('update room', () => {
       socket.current.emit('get rooms')
+    })
+
+    socket.current.on('message back', ({ result, messages }) => {
+      console.log(result);
+      console.log(messages)
     })
 
     return function() {
@@ -68,37 +76,39 @@ function App() {
     socket.current.emit('delete rooms')
   }
 
+  const sendMessage = () => {
+    if (username && selectedRoom && message) {
+      socket.current.emit('send message', { username, selectedRoom, message })
+    }
+  }
+
   return (
     <div className="App">
-      {/* <Router>
-        <Switch>
-          <Route path='/' exact render={props =>
-            <Landing
-              {...props}
-              rooms={rooms}
-              getRooms={getRooms}
-              joinRoom={joinRoom}
-              selectedRoom={selectedRoom}
-              setSelectedRoom={setSelectedRoom}
-              deleteRooms={deleteRooms}
-              appSocket={socket.current}
-            />}
-          />
 
-          <Route path='/game' exact render={props => <Game {...props} />} />
-        </Switch>
-      </Router> */}
-      {landing ? <Landing
-              rooms={rooms}
-              getRooms={getRooms}
-              joinRoom={joinRoom}
-              selectedRoom={selectedRoom}
-              setSelectedRoom={setSelectedRoom}
-              deleteRooms={deleteRooms}
-              appSocket={socket.current}
-              setLanding={setLanding}
-              landing={landing}
-            />:  <Game />}
+      {landing ?
+        <Landing
+          rooms={rooms}
+          getRooms={getRooms}
+          joinRoom={joinRoom}
+          selectedRoom={selectedRoom}
+          setSelectedRoom={setSelectedRoom}
+          deleteRooms={deleteRooms}
+          appSocket={socket.current}
+          setLanding={setLanding}
+          landing={landing}
+        /> : <Game
+          selectedRoom={selectedRoom}
+          appSocket={socket.current}
+          setLanding={setLanding}
+          landing={landing}
+          message={message}
+          setMessage={setMessage}
+          messages={messages}
+          setMessages={setMessages}
+          username={username}
+          setUsername={setUsername}
+          sendMessage={sendMessage}
+        />}
     </div>
   );
 }

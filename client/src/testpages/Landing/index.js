@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Landing.css'
 
 const Landing = (props) => {
@@ -6,9 +6,8 @@ const Landing = (props) => {
   const [newRoom, setNewRoom] = useState('');
 
   const testing = true;
-  let socket = useRef(null);
 
-  let { selectedRoom, joinRoom, appSocket } = props
+  let { selectedRoom, joinRoom } = props
 
   useEffect(() => {
     if (selectedRoom) {
@@ -16,18 +15,6 @@ const Landing = (props) => {
       joinRoom()
     }
   }, [selectedRoom, joinRoom])
-
-  useEffect(() => {
-    if (appSocket) {
-      socket.current = appSocket
-
-      socket.current.emit('testing')
-
-      socket.current.on('test back', (message) => {
-        console.log(message)
-      })
-    }
-  }, [appSocket])
 
   const handleNewRoomInput = (e) => {
     setNewRoom(e.target.value)
