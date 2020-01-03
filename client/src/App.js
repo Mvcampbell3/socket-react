@@ -13,6 +13,7 @@ function App() {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [username, setUsername] = useState('');
+  const [roomId, setRoomId] = useState('');
 
   let socket = useRef(null);
   let ENDPOINT = 'localhost:3001';
@@ -36,7 +37,9 @@ function App() {
 
     socket.current.on('join room', (data) => {
       console.log(data);
-      setMessages(data.messages);
+      // setMessages(data.messages);
+      console.log(data.dbRoom._id)
+      setRoomId(data.dbRoom._id)
       setLanding(false);
     })
 
@@ -56,6 +59,7 @@ function App() {
 
     socket.current.on('err send', ({ err }) => {
       console.log(err)
+      setSelectedRoom('');
     })
 
     return function() {
@@ -78,9 +82,13 @@ function App() {
     socket.current.emit('delete rooms')
   }
 
+  const deleteMessages = () => {
+    socket.current.emit('delete messages');
+  }
+
   const sendMessage = () => {
-    if (username && selectedRoom && message) {
-      socket.current.emit('send message', { username, selectedRoom, message })
+    if (username && selectedRoom && message && roomId) {
+      socket.current.emit('send message', { username, selectedRoom, message, roomId })
     }
   }
 
@@ -94,6 +102,7 @@ function App() {
           selectedRoom={selectedRoom}
           setSelectedRoom={setSelectedRoom}
           deleteRooms={deleteRooms}
+          deleteMessages={deleteMessages}
           appSocket={socket.current}
           setLanding={setLanding}
           landing={landing}

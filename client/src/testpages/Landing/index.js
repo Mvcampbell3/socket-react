@@ -35,6 +35,7 @@ const Landing = (props) => {
             <button onClick={() => { props.getRooms() }}>Get Rooms</button>
             <button onClick={testRoom}>Test Room</button>
             <button onClick={props.deleteRooms}>Delete Rooms</button>
+            <button onClick={props.deleteMessages}>Delete Messages</button>
             <button onClick={landingGameSet}>Game Page</button>
           </div>
         </div>

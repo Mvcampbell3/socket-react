@@ -25,6 +25,8 @@ const checkRoom = (socket, room, cb) => {
 const joinUpsertRoom = (socket, room, cb) => {
   console.log(room)
   db.Room.findOneAndUpdate({ name: room }, { $push: { users: socket.id } }, { new: true, upsert: true })
+    .populate({ path: 'messages', model: 'Message' })
+    .exec()
     .then(dbRoom => {
       console.log(dbRoom)
       cb({ dbRoom })
@@ -36,13 +38,14 @@ const joinUpsertRoom = (socket, room, cb) => {
 
 const saveMessage = (socket, data, cb) => {
   console.log(data);
-  const { username, message, selectedRoom } = data;
+  const { username, message, selectedRoom, roomId } = data;
   console.log(username, message, selectedRoom);
 
   const newMessage = new db.Message({
-    username, 
+    username,
     content: message,
-    room: selectedRoom
+    room: selectedRoom,
+    roomId
   });
 
   newMessage.save()
@@ -55,9 +58,36 @@ const saveMessage = (socket, data, cb) => {
 }
 
 const deleteRooms = (cb) => {
-  db.Room.deleteMany()
-    .then(result => {
-      cb({ result })
+  // let promises = []
+  db.Room.find()
+    .then(rooms => {
+      rooms.forEach(room => {
+        room.remove()
+          .then(result => {
+            cb({ result });
+          })
+          .catch(err => {
+            cb({ err })
+          })
+      })
+    })
+    .catch(err => {
+      cb({ err })
+    })
+}
+
+const deleteMessages = (cb) => {
+  db.Message.find()
+    .then(messages => {
+      messages.forEach(message => {
+        message.remove()
+          .then(result => {
+            cb({ result });
+          })
+          .catch(err => {
+            cb({ err })
+          })
+      })
     })
     .catch(err => {
       cb({ err })
@@ -101,4 +131,12 @@ const disconnectCheck = (socket, cb) => {
     })
 }
 
-module.exports = { getRooms, checkRoom, deleteRooms, disconnectCheck, saveMessage, grabMessage }
+module.exports = { 
+  getRooms, 
+  checkRoom, 
+  deleteRooms, 
+  disconnectCheck, 
+  saveMessage, 
+  grabMessage, 
+  deleteMessages
+}

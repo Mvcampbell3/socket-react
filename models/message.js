@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const Room = require('../models/Room');
 
 const MessageSchema = new Schema({
   content: {
@@ -15,9 +16,35 @@ const MessageSchema = new Schema({
   room: {
     type: String,
     required: true
+  },
+
+  roomId: {
+    type: mongoose.Types.ObjectId,
+    ref: 'Room',
+    required: true
   }
 })
 
-const Message = mongoose.model('Message', MessageSchema);
+MessageSchema.pre('save', function(next) {
+  console.log(Room)
+  Room.findByIdAndUpdate(this.roomId, { $push: { messages: this._id } })
+    .then(() => {
+      next()
+    })
+    .catch(err => {
+      next(err)
+    })
+})
 
-module.exports = Message;
+MessageSchema.pre('remove', function(next) {
+  Room.findByIdAndUpdate(this.roomId, { $pull: { messages: this._id } })
+    .then(() => {
+      next()
+    })
+    .catch(err => {
+      next(err)
+    })
+})
+
+module.exports = Message = mongoose.model('Message', MessageSchema)
+
