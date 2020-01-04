@@ -18,6 +18,7 @@ function App() {
   let socket = useRef(null);
   let ENDPOINT = 'localhost:3001';
   // state for game play and turns
+  const [startGame, setStartGame] = useState(false);
 
   const startingSquares = [
     { place: 1, open: true, value: '' },
@@ -33,6 +34,9 @@ function App() {
 
   const [squares, setSquares] = useState(startingSquares);
 
+  // Main Socket Receiving Effect Function
+  // All the sockets.current.on must go in this useEffect
+
   useEffect(() => {
     socket.current = io(ENDPOINT);
 
@@ -40,10 +44,6 @@ function App() {
 
     socket.current.emit('get rooms');
 
-    // All the sockets.current.on must go in this useEffect?
-    // If you want to use them on this component they do
-    // Load socket using useEffect/useRef method to carry socket over
-    // Create another useEffect for receiving messages there if you want
 
     socket.current.on('rooms back', ({ rooms }) => {
       console.log({ rooms })
@@ -82,6 +82,20 @@ function App() {
     socket.current.on('left room', () => {
       setSelectedRoom('');
       setLanding(true);
+    })
+
+    socket.current.on('game state', (data) => {
+      console.log(data);
+      const key = Object.keys(data);
+      console.log(key)
+      switch (key[0]) {
+        case 'dbRoom':
+          console.log('congrats this should be ok');
+          setPlayers(data.dbRoom.users.length)
+          break;
+        default: 
+          console.log('still fucked')
+      }
     })
 
     return function() {
@@ -149,6 +163,8 @@ function App() {
           squares={squares}
           setSquares={setSquares}
           players={players}
+          startGame={startGame}
+          setStartGame={setStartGame}
         />}
     </div>
   );

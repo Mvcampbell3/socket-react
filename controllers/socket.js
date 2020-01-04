@@ -1,59 +1,113 @@
+// const db = require('../models');
 const db_interface = require('./db_interface');
+const game_interface = require('./game_interface');
 
 module.exports = function(io) {
-
   io.on('connection', (socket) => {
-    console.log('new connection')
+    console.log('user connected')
+
+    function errSend({ err }) {
+      socket.emit('err send', { err })
+    }
+
+    // incoming database requests received
+
+    socket.on('get rooms', () => {
+      console.log('received get rooms')
+      db_interface.getRooms(({ err, rooms }) => {
+        if (err) {
+          console.log('had err')
+          return console.log(err);
+        }
+        return socket.emit('rooms back', { rooms })
+      })
+    })
 
     socket.on('join room', (room) => {
-
-      // db_interface.joinRoomOrCreateRoom(socket, room, function({ err, dbRoom }) {
-      //   if (err) {
-      //     throw err;
-      //   }
-
-      //   console.log('this is the result')
-      //   console.log(dbRoom);
-      //   socket.emit('room entered', { user: socket.id, room, dbRoom })
-      //   socket.join(room);
-      // })
-
-      db_interface.checkRoomUsersLength(socket, room, function({ err, dbRoom }) {
+      console.log('received join room');
+      console.log(room)
+      db_interface.checkRoom(socket, room, ({ err, dbRoom }) => {
         if (err) {
-          // Throwing err not what we want to do apparently
+          console.log({ err })
+          return errSend({ err });
+        }
+
+        socket.join(room);
+        io.to(room).emit('game state', { dbRoom })
+        socket.broadcast.emit('update room');
+        return socket.emit('join room', { dbRoom })
+      })
+    })
+
+    socket.on('send message', (data) => {
+      console.log(data);
+      db_interface.saveMessage(socket, data, ({ err, result }) => {
+        if (err) {
           return console.log(err);
         }
 
-        console.log('this is the result')
-        console.log(dbRoom);
-        socket.emit('room entered', { user: socket.id, room, dbRoom })
-        socket.join(room);
+
+        db_interface.grabMessage(result.roomId, ({ err, messages }) => {
+          if (err) {
+            return console.log(err)
+          }
+
+          io.in(result.room).emit('message back', { result, messages })
+        })
       })
     })
 
-    socket.on('message', ({ message, room, username }) => {
-      db_interface.addMessage(message, room, username, function({ err, result }) {
+    socket.on('delete rooms', () => {
+      console.log('received delete rooms');
+      db_interface.deleteRooms(({ err, result }) => {
         if (err) {
-          throw err
+          return console.log(err)
         }
-        console.log(result);
-        io.in(room).emit('message back', message)
+        return socket.emit('admin message', result)
       })
-
     })
 
-    // disconnect features
+    socket.on('delete messages', () => {
+      console.log('received delete messages');
+      db_interface.deleteMessages(({ err, result }) => {
+        if (err) {
+          return errSend({ err })
+        }
+
+        return socket.emit('admin message', result)
+      })
+    })
 
     socket.on('disconnect', () => {
-
       db_interface.disconnectCheck(socket, function({ err, result }) {
-        if (err) throw err;
+        if (err) {
+          return console.log(err)
+        };
         console.log(result);
         // send emit for room list update
+        socket.broadcast.emit('update room');
       })
-
-
     })
-  })
 
+    socket.on('leave room', (room) => {
+      console.log(room);
+
+      db_interface.disconnectCheck(socket, function({ err, result }) {
+        if (err) {
+          return errSend({ err })
+        }
+
+        socket.leave(room);
+        socket.emit('left room');
+        socket.broadcast.emit('update room')
+      })
+    })
+
+    // incoming game requests
+    
+
+
+
+
+  })
 }

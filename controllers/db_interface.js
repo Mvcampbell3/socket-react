@@ -1,45 +1,106 @@
 const db = require('../models');
 
+const getRooms = (cb) => {
+  db.Room.find()
+    .then(rooms => {
+      cb({ rooms })
+    })
+    .catch(err => {
+      cb({ err })
+    })
+}
 
-// This Method joins an existing socket room or creates a new room
-const joinRoomOrCreateRoom = (socket, room, cb) => {
+const checkRoom = (socket, room, cb) => {
+  db.Room.findOne({ name: room })
+    .then(dbRoom => {
+      if (!dbRoom || dbRoom.users.length < 2) {
+        // run joinupsertroom
+        joinUpsertRoom(socket, room, cb);
+      } else {
+        cb({ err: { msg: 'Room is full' } })
+      }
+    })
+};
+
+const joinUpsertRoom = (socket, room, cb) => {
+  console.log(room)
   db.Room.findOneAndUpdate({ name: room }, { $push: { users: socket.id } }, { new: true, upsert: true })
+    .populate({ path: 'messages', model: 'Message' })
+    .exec()
     .then(dbRoom => {
       console.log(dbRoom)
       cb({ dbRoom })
     })
     .catch(err => {
-      console.log(err)
+      cb({ err })
     })
 }
 
-const checkRoomUsersLength = (socket, room, cb) => {
-  db.Room.findOne({ name: room })
-    .then(dbRoom => {
-      if (!dbRoom || dbRoom.users.length < 2) {
-        joinRoomOrCreateRoom(socket, room, cb)
-      } else {
-        cb({ err: { msg: 'There are enough fuckers here already' } })
-      }
+const saveMessage = (socket, data, cb) => {
+  console.log(data);
+  const { username, message, selectedRoom, roomId } = data;
+  console.log(username, message, selectedRoom);
+
+  const newMessage = new db.Message({
+    username,
+    content: message,
+    room: selectedRoom,
+    roomId
+  });
+
+  newMessage.save()
+    .then(result => {
+      cb({ result })
+    })
+    .catch(err => {
+      cb({ err })
     })
 }
 
-const addMessage = (message, room, username, cb) => {
-
-  if (message && room && username) {
-
-    const newMessage = new db.Message({
-      content: message, username, room
+const deleteRooms = (cb) => {
+  db.Room.find()
+    .then(rooms => {
+      rooms.forEach(room => {
+        room.remove()
+          .then(result => {
+            cb({ result });
+          })
+          .catch(err => {
+            cb({ err })
+          })
+      })
     })
+    .catch(err => {
+      cb({ err })
+    })
+}
 
-    newMessage.save()
-      .then(result => {
-        cb({ result });
+const deleteMessages = (cb) => {
+  db.Message.find()
+    .then(messages => {
+      messages.forEach(message => {
+        message.remove()
+          .then(result => {
+            cb({ result });
+          })
+          .catch(err => {
+            cb({ err })
+          })
       })
-      .catch(err => {
-        cb({ err })
-      })
-  }
+    })
+    .catch(err => {
+      cb({ err })
+    })
+}
+
+const grabMessage = (roomId, cb) => {
+  db.Message.find({ roomId })
+    .then(messages => {
+      cb({ messages })
+    })
+    .catch(err => {
+      cb({ err })
+    })
 }
 
 const disconnectCheck = (socket, cb) => {
@@ -56,17 +117,30 @@ const disconnectCheck = (socket, cb) => {
               cb({ err })
             })
         } else { // There will be an empty room left
-          room.remove()
+          console.log(room._id, 'room id')
+          let promises = [db.Message.deleteMany({ roomId: room._id }), room.remove()];
+
+          Promise.all(promises)
             .then(result => {
+              console.log(result)
               cb({ result })
             })
             .catch(err => {
               cb({ err })
             })
+
         }
       })
 
     })
 }
 
-module.exports = { joinRoomOrCreateRoom, addMessage, disconnectCheck, checkRoomUsersLength }
+module.exports = {
+  getRooms,
+  checkRoom,
+  deleteRooms,
+  disconnectCheck,
+  saveMessage,
+  grabMessage,
+  deleteMessages
+}
