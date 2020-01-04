@@ -6,6 +6,9 @@ import Landing from './testpages/Landing';
 import Game from './testpages/Game';
 
 function App() {
+  let socket = useRef(null);
+  let ENDPOINT = 'localhost:3001';
+
   // state for landing and game component loading
   const [rooms, setRooms] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState('');
@@ -14,11 +17,9 @@ function App() {
   const [messages, setMessages] = useState([]);
   const [username, setUsername] = useState('');
   const [roomId, setRoomId] = useState('');
-  const [players, setPlayers] = useState(0);
-  let socket = useRef(null);
-  let ENDPOINT = 'localhost:3001';
+  
   // state for game play and turns
-  const [startGame, setStartGame] = useState(false);
+  
 
   const startingSquares = [
     { place: 1, open: true, value: '' },
@@ -32,6 +33,8 @@ function App() {
     { place: 9, open: true, value: '' },
   ]
 
+  const [startGame, setStartGame] = useState(false);
+  const [players, setPlayers] = useState(0);
   const [squares, setSquares] = useState(startingSquares);
 
   // Main Socket Receiving Effect Function
@@ -92,6 +95,9 @@ function App() {
         case 'dbRoom':
           console.log('congrats this should be ok');
           setPlayers(data.dbRoom.users.length)
+          break;
+        case 'order':
+          console.log(data);
           break;
         default: 
           console.log('still fucked')
@@ -162,7 +168,6 @@ function App() {
           leaveRoom={leaveRoom}
           squares={squares}
           setSquares={setSquares}
-          players={players}
           startGame={startGame}
           setStartGame={setStartGame}
         />}

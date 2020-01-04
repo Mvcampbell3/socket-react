@@ -99,12 +99,16 @@ module.exports = function(io) {
 
         socket.leave(room);
         socket.emit('left room');
-        socket.broadcast.emit('update room')
+        io.emit('update room')
       })
     })
 
     // incoming game requests
-    
+    socket.on('start game', (room) => {
+      game_interface.returnPlayersOrder((player1, player2) => {
+        io.to(room).emit('game state', { order: { X: player1, Y: player2 } })
+      })
+    })
 
 
 

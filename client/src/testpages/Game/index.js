@@ -1,17 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import './Game.css'
 
 const Game = (props) => {
 
   const testing = true;
-
-  let { players } = props
-
-  useEffect(() => {
-    if (players === 2) {
-      console.log('game would start')
-    }
-  }, [players])
 
   return (
     <div className="wrapper">
