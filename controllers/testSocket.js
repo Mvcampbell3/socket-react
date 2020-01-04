@@ -72,8 +72,6 @@ module.exports = function(io) {
       })
     })
 
-
-
     socket.on('disconnect', () => {
       db_interface.disconnectCheck(socket, function({ err, result }) {
         if (err) {

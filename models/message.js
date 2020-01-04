@@ -26,7 +26,6 @@ const MessageSchema = new Schema({
 })
 
 MessageSchema.pre('save', function(next) {
-  console.log(Room)
   Room.findByIdAndUpdate(this.roomId, { $push: { messages: this._id } })
     .then(() => {
       next()

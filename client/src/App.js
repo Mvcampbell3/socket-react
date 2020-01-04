@@ -39,7 +39,8 @@ function App() {
       console.log(data);
       // setMessages(data.messages);
       console.log(data.dbRoom._id)
-      setRoomId(data.dbRoom._id)
+      setRoomId(data.dbRoom._id);
+      setMessages(data.dbRoom.messages)
       setLanding(false);
     })
 
