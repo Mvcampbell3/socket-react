@@ -13,11 +13,39 @@ class App extends Component {
     connected: false,
     showLanding: true,
     rooms: [],
-    messages: []
+    messages: [],
+    newRoomName: '',
+    selectedRoom: '',
   }
 
   componentDidMount() {
     this.socketInit()
+  }
+
+  componentWillUnmount() {
+    this.state.socket.disconnect();
+  }
+
+  createRoom = () => {
+    this.setState(prevState => {
+      prevState.selectedRoom = prevState.newRoomName;
+      return prevState;
+    }, () => {
+      // join room
+      this.joinRoom()
+    })
+  }
+
+  joinRoom = () => {
+    this.state.socket.emit('join room', this.state.selectedRoom);
+  }
+
+  handleInputChange = (e) => {
+    this.setState({ [e.target.name]: e.target.value })
+  }
+
+  deleteRooms = () => {
+    this.state.socket.emit('delete rooms')
   }
 
   // Will contain ALL of the socket.on events
@@ -28,10 +56,11 @@ class App extends Component {
     }, () => {
       this.setState({ connected: true })
 
-      this.state.socket.emit('get rooms')
+      let { socket } = this.state;
 
+      socket.emit('get rooms')
 
-      this.state.socket.on('rooms back', (rooms) => {
+      socket.on('rooms back', (rooms) => {
         console.log(rooms);
         this.setState(prevState => {
           prevState.rooms = rooms.rooms;
@@ -39,7 +68,9 @@ class App extends Component {
         })
       })
 
-
+      socket.on('join room', (data) => {
+        console.log(data);
+      })
     })
   }
 
@@ -47,9 +78,17 @@ class App extends Component {
     return (
       <div>
         <Header />
-        {this.state.showLanding ? <Landing />
-        
-        :null}
+        {this.state.showLanding ?
+
+          <Landing
+            rooms={this.state.rooms}
+            newRoomName={this.state.newRoomName}
+            handleInputChange={this.handleInputChange}
+            createRoom={this.createRoom}
+            deleteRooms={this.deleteRooms}
+          />
+
+          : null}
 
       </div>
     );
