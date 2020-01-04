@@ -23,3 +23,7 @@ button, .divButton{
   background-color: lightyellow;
   padding: 20px;
 }
+
+.container{
+  padding: 20px;
+}
