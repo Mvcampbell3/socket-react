@@ -16,9 +16,6 @@ const Game = (props) => {
         </div>
       </div> : null}
 
-      <div className="game-container">
-
-      </div>
       <div className="chat-holder">
         <div className="message-area">
           {props.messages.map((message, i) => (
@@ -26,13 +23,13 @@ const Game = (props) => {
           ))}
         </div>
         <div className="input-group">
-          <input type="text" placeholder='username...' value={props.username} onChange={(e) => { props.setUsername(e.target.value) }} />
+          <input className='input-chat' type="text" placeholder='username...' value={props.username} onChange={(e) => { props.setUsername(e.target.value) }} />
         </div>
         <div className="input-group">
-          <input type="text" placeholder='message' value={props.message} onChange={(e) => props.setMessage(e.target.value)} />
+          <input className='input-chat' type="text" placeholder='message' value={props.message} onChange={(e) => props.setMessage(e.target.value)} />
         </div>
         <div className="input-group">
-          <button onClick={props.sendMessage}>Send Message</button>
+          <button className='btn-chat' onClick={props.sendMessage}>Send Message</button>
         </div>
       </div>
     </div>

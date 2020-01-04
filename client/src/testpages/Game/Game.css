@@ -1,67 +1,24 @@
-.game-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-}
-
-.square-holder{
-  display: grid;
-  grid-template-columns: repeat(3, 100px);
-  width: fit-content;
+.chat-holder{
+  width: 50%;
+  min-width: 300px;
   margin: 1em auto;
 }
 
-.square{
-  width: 100px;
-  height: 100px;
-  display: grid;
-  place-items: center center;
-  border: 1px black solid;
+.input-chat{
+  display: block;
+  width: 100%;
+  padding: 8px;
+  font-size: 20px;
 }
 
-.sqx{
-  background-color: blue;
-  color: white;
+.btn-chat{
+  display: block;
+  width: 100%;
 }
 
-.sqo{
-  background-color: red;
-  color: white;
-}
-
-.sq1{
-  border-top: none;
-  border-left: none;
-}
-
-.sq2{
-  border-top: none;
-}
-
-.sq3{
-  border-top: none;
-  border-right: none;
-}
-
-.sq4{
-  border-left: none;
-}
-
-
-
-.sq6{
-  border-right: none;
-}
-
-.sq7{
-  border-left: none;
+.message-area{
+  height: 300px;
+  overflow-y: auto;
+  border: 1px #bbb solid;
   border-bottom: none;
-}
-
-.sq8{
-  border-bottom: none;
-}
-
-.sq9{
-  border-bottom: none;
-  border-right: none;
 }
