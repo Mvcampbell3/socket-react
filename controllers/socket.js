@@ -10,6 +10,10 @@ module.exports = function(io) {
       socket.emit('err send', { err })
     }
 
+    socket.on('hello', () => {
+      socket.emit('hello back', socket.id)
+    })
+
     // incoming database requests received
 
     socket.on('get rooms', () => {
