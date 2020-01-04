@@ -58,7 +58,6 @@ const saveMessage = (socket, data, cb) => {
 }
 
 const deleteRooms = (cb) => {
-  // let promises = []
   db.Room.find()
     .then(rooms => {
       rooms.forEach(room => {
@@ -94,8 +93,8 @@ const deleteMessages = (cb) => {
     })
 }
 
-const grabMessage = (room, cb) => {
-  db.Message.find({ room })
+const grabMessage = (roomId, cb) => {
+  db.Message.find({ roomId })
     .then(messages => {
       cb({ messages })
     })
@@ -118,25 +117,30 @@ const disconnectCheck = (socket, cb) => {
               cb({ err })
             })
         } else { // There will be an empty room left
-          room.remove()
+          console.log(room._id, 'room id')
+          let promises = [db.Message.deleteMany({ roomId: room._id }), room.remove()];
+
+          Promise.all(promises)
             .then(result => {
+              console.log(result)
               cb({ result })
             })
             .catch(err => {
               cb({ err })
             })
+
         }
       })
 
     })
 }
 
-module.exports = { 
-  getRooms, 
-  checkRoom, 
-  deleteRooms, 
-  disconnectCheck, 
-  saveMessage, 
-  grabMessage, 
+module.exports = {
+  getRooms,
+  checkRoom,
+  deleteRooms,
+  disconnectCheck,
+  saveMessage,
+  grabMessage,
   deleteMessages
 }
