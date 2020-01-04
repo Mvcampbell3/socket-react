@@ -1,37 +1,17 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect } from 'react';
 import './Game.css'
 
 const Game = (props) => {
 
-  const testing = false;
-  // let socket = useRef(null);
+  const testing = true;
 
-  const startingSquares = [
-    { place: 1, open: true, value: '' },
-    { place: 2, open: true, value: '' },
-    { place: 3, open: true, value: '' },
-    { place: 4, open: true, value: '' },
-    { place: 5, open: true, value: '' },
-    { place: 6, open: true, value: '' },
-    { place: 7, open: true, value: '' },
-    { place: 8, open: true, value: '' },
-    { place: 9, open: true, value: '' },
-  ]
+  let { players } = props
 
-  const [squares, setSquares] = useState(startingSquares);
-
-  // useEffect(() => {
-  //   if (props.appSocket) {
-  //     socket.current = props.appSocket
-  //   }
-
-  //   socket.current.emit('testing');
-
-  //   socket.current.on('test back', message => {
-  //     console.log(message)
-  //   })
-
-  // }, [props.appSocket])
+  useEffect(() => {
+    if (players === 2) {
+      console.log('game would start')
+    }
+  }, [players])
 
   return (
     <div className="wrapper">
@@ -39,12 +19,14 @@ const Game = (props) => {
 
       {testing ? <div className="test-area">
         <h4 className="text-center">Testing Area</h4>
+        <div className="test-box">
+          <button onClick={props.leaveRoom}>Landing</button>
+        </div>
       </div> : null}
-
 
       <div className="game-container">
         <div className="square-holder">
-          {squares.map(square => (
+          {props.squares.map(square => (
             <div
               className={square.open ? `square sq${square.place}` :
                 square.value === 'X' ? `square sq${square.place} sqx` : `square sq${square.place} sqo`} key={square.place}>{square.value}</div>

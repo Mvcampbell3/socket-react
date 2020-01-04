@@ -57,7 +57,7 @@ const Landing = (props) => {
           {props.rooms.length > 0 ?
             <>
               {props.rooms.map((room, i) => (
-                <div className="room" key={i}>{room.name}</div>
+                <div className="divButton" data-room={room.name} onClick={(e) => props.setSelectedRoom(e.target.dataset.room)} key={i}>{room.name}</div>
               ))}
             </>
             : <h4 className='text-center'>There are no rooms yet</h4>

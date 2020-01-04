@@ -83,6 +83,19 @@ module.exports = function(io) {
       })
     })
 
+    socket.on('leave room', (room) => {
+      console.log(room);
+
+      db_interface.disconnectCheck(socket, function({ err, result}) {
+        if (err) {
+          return errSend({err})
+        }
+
+        socket.leave(room);
+        socket.emit('left room')
+      })
+    })
+
     socket.on('testing', () => {
       socket.emit('test back', 'This is the test back message')
     })

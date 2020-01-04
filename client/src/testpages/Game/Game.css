@@ -1,3 +1,8 @@
+.game-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
 .square-holder{
   display: grid;
   grid-template-columns: repeat(3, 100px);

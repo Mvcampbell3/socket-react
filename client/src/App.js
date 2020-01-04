@@ -6,7 +6,7 @@ import Landing from './testpages/Landing';
 import Game from './testpages/Game';
 
 function App() {
-
+  // state for landing and game component loading
   const [rooms, setRooms] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState('');
   let [landing, setLanding] = useState(true);
@@ -14,9 +14,24 @@ function App() {
   const [messages, setMessages] = useState([]);
   const [username, setUsername] = useState('');
   const [roomId, setRoomId] = useState('');
-
+  const [players, setPlayers] = useState(0);
   let socket = useRef(null);
   let ENDPOINT = 'localhost:3001';
+  // state for game play and turns
+
+  const startingSquares = [
+    { place: 1, open: true, value: '' },
+    { place: 2, open: true, value: '' },
+    { place: 3, open: true, value: '' },
+    { place: 4, open: true, value: '' },
+    { place: 5, open: true, value: '' },
+    { place: 6, open: true, value: '' },
+    { place: 7, open: true, value: '' },
+    { place: 8, open: true, value: '' },
+    { place: 9, open: true, value: '' },
+  ]
+
+  const [squares, setSquares] = useState(startingSquares);
 
   useEffect(() => {
     socket.current = io(ENDPOINT);
@@ -40,6 +55,7 @@ function App() {
       // setMessages(data.messages);
       console.log(data.dbRoom._id)
       setRoomId(data.dbRoom._id);
+      setPlayers(data.dbRoom.users.length);
       setMessages(data.dbRoom.messages)
       setLanding(false);
     })
@@ -61,6 +77,11 @@ function App() {
     socket.current.on('err send', ({ err }) => {
       console.log(err)
       setSelectedRoom('');
+    })
+
+    socket.current.on('left room', () => {
+      setSelectedRoom('');
+      setLanding(true);
     })
 
     return function() {
@@ -93,6 +114,10 @@ function App() {
     }
   }
 
+  const leaveRoom = () => {
+    socket.current.emit('leave room', selectedRoom)
+  }
+
   return (
     <div className="App">
 
@@ -111,6 +136,7 @@ function App() {
           selectedRoom={selectedRoom}
           appSocket={socket.current}
           setLanding={setLanding}
+          setSelectedRoom={setSelectedRoom}
           landing={landing}
           message={message}
           setMessage={setMessage}
@@ -119,6 +145,10 @@ function App() {
           username={username}
           setUsername={setUsername}
           sendMessage={sendMessage}
+          leaveRoom={leaveRoom}
+          squares={squares}
+          setSquares={setSquares}
+          players={players}
         />}
     </div>
   );
