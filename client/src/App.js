@@ -19,7 +19,6 @@ function App() {
   const [roomId, setRoomId] = useState('');
   
   // state for game play and turns
-  
 
   const startingSquares = [
     { place: 1, open: true, value: '' },
@@ -34,8 +33,9 @@ function App() {
   ]
 
   const [startGame, setStartGame] = useState(false);
-  const [players, setPlayers] = useState(0);
   const [squares, setSquares] = useState(startingSquares);
+  const [playerOrder, setPlayerOrder] = useState([]);
+  const [turn, setTurn] = useState(0);
 
   // Main Socket Receiving Effect Function
   // All the sockets.current.on must go in this useEffect
@@ -55,10 +55,8 @@ function App() {
 
     socket.current.on('join room', (data) => {
       console.log(data);
-      // setMessages(data.messages);
       console.log(data.dbRoom._id)
       setRoomId(data.dbRoom._id);
-      setPlayers(data.dbRoom.users.length);
       setMessages(data.dbRoom.messages)
       setLanding(false);
     })
@@ -94,7 +92,6 @@ function App() {
       switch (key[0]) {
         case 'dbRoom':
           console.log('congrats this should be ok');
-          setPlayers(data.dbRoom.users.length)
           break;
         case 'order':
           console.log(data);
@@ -102,6 +99,10 @@ function App() {
         default: 
           console.log('still fucked')
       }
+    })
+
+    socket.current.on('set players', (order) => {
+      setPlayerOrder(order)
     })
 
     return function() {
@@ -170,6 +171,9 @@ function App() {
           setSquares={setSquares}
           startGame={startGame}
           setStartGame={setStartGame}
+          playerOrder={playerOrder}
+          turn={turn}
+          setTurn={setTurn}
         />}
     </div>
   );

@@ -32,10 +32,19 @@ module.exports = function(io) {
           return errSend({ err });
         }
 
+        
+
         socket.join(room);
         io.to(room).emit('game state', { dbRoom })
         socket.broadcast.emit('update room');
-        return socket.emit('join room', { dbRoom })
+        socket.emit('join room', { dbRoom })
+
+        if (dbRoom.users.length === 2) {
+          console.log('This is where we start the game from')
+          game_interface.returnPlayersOrder(dbRoom, function(users) {
+            io.to(room).emit('set players', users)
+          })
+        }
       })
     })
 

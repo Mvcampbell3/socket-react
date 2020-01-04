@@ -1,9 +1,11 @@
-const returnPlayersOrder = (cb) => {
+const returnPlayersOrder = (dbRoom, cb) => {
+  console.log(dbRoom);
+
   var randNum = Math.floor((Math.random() * 10000));
   if (randNum > 5000) {
-    cb(0, 1)
+    cb([dbRoom.users[0], dbRoom.users[1]])
   } else {
-    cb(1, 0)
+    cb([dbRoom.users[1], dbRoom.users[0]])
   }
 }
 
