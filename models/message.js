@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const Room = require('./Room');
 
 const MessageSchema = new Schema({
   content: {
@@ -22,6 +23,12 @@ const MessageSchema = new Schema({
     ref: 'Room',
     required: true
   }
+})
+
+MessageSchema.pre('remove', function(next) {
+  console.log('ran pre remove message hook');
+  console.log(Room);
+  next();
 })
 
 module.exports = Message = mongoose.model('Message', MessageSchema);
