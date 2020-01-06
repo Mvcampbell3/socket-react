@@ -24,9 +24,15 @@ router.delete('/deleteall', (req, res) => {
       })
       Promise.all(promises)
         .then(results => res.status(200).json(results))
-        .catch(err => res.status(500).json(err))
+        .catch(err => {
+          console.log(err);
+          res.status(500).json(err)
+        })
     })
-    .catch(err => res.status(500).json(err))
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err)
+    })
 })
 
 module.exports = router;

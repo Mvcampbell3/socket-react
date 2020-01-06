@@ -25,10 +25,16 @@ const MessageSchema = new Schema({
   }
 })
 
+MessageSchema.pre('save', function(next) {
+  Room.findByIdAndUpdate(this.roomId, { $push: {messageIds: this._id}})
+    .then(() => next())
+    .catch(err => next(err))
+})
+
 MessageSchema.pre('remove', function(next) {
-  console.log('ran pre remove message hook');
-  console.log(Room);
-  next();
+  Room.findByIdAndUpdate(this.roomId, { $pull: {messageIds: this._id}})
+    .then(() => next())
+    .catch(err => next(err))
 })
 
 module.exports = Message = mongoose.model('Message', MessageSchema);
