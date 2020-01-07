@@ -10,15 +10,6 @@ app.use(express.json());
 
 app.use(routes)
 
-const mongoose = require('mongoose');
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/socketredo',
-  { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false },
-  () => {
-    console.log('mongoose is connected');
-    server.listen(PORT, () => {
-      console.log(`server is live at http://localhost:${PORT}`)
-    })
-  })
-
-
-
+server.listen(PORT, () => {
+  console.log(`server is live at http://localhost:${PORT}`)
+})
